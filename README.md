@@ -31,24 +31,30 @@ These are the hours I want to track. I suppose if you wake up at 04:00 or goes t
 
 Open the scripts now and edit the filepaths on the first lines of each script. 
 
-`energy.csv` is the file you just created.
-`av-energy.csv` will be created by one of the scripts, so it doesn't need to exist (and it gets overwritten every time); you do need to make sure the folder where you want it to be does exist.
-`energy-graph.png` will be the generated chart image (it also gets overwritten every time).
+- `energy.csv` is the file you just created;
+- `av-energy.csv` will be created by one of the scripts, so it doesn't need to exist (and it gets overwritten every time); you do need to make sure the folder where you want it to be does exist;
+- `energy-graph.png` will be the generated chart image (it also gets overwritten every time).
 
 ### doing the tracking
 Now let's add some numbers!
 
 I use a scale from 1 to 5: 1 is near-zero energy; 2 is low; 3 is ok; 4 is good energy; 5 is **awesome**. You can use your own scale, as long as it's made of integers. I think.
 
-The script `te` is the main one. You just run it with the corresponding number for your current energy level as the argument. So you're having a great day: you do `te 5`. Done. It will add a `5` to the line that corresponds to the current hour. The idea is to enter one number per hour. It doesn't matter if you do it at 15:00 or 15:06 or 15:59; it'll add the number to the "15:00" row.
+The script `te` is the main one. You just run it with the corresponding number for your current energy level as the argument. So you're having a great day: you do `te 5`. 
 
-You're supposed to do that every hour. Set an alarm or something.
+Done. 
+
+It will add a `5` to the line that corresponds to the current hour. The idea is to enter one number per hour. It doesn't matter if you do it at 15:00 or 15:06 or 15:59; it'll add the number to the "15:00" row.
+
+You're supposed to do that every hour. **Set an alarm or something.**
 
 But what if you miss an hour? Oh no!
 
-You could of course just open energy.csv on your favorite editor and add the proper number. But that's probably a lot of work and you wouldn't be using a script if you didn't mind opening a file and editing. So you can use `tt` for entering values for specific hours. Say you forgot to update your tracking at 14:00 and now it's 15:02. You do `tt 4 14` [4 because you were feeling pretty energetic and that's probably why you forgot to track your energy in the first place, and 14 because that's the hour that has passed].
+You could of course just open energy.csv on your favorite editor and add the proper number. But that's probably a lot of work and you wouldn't be using a script if you didn't mind opening a file and editing. 
 
-Yay.
+So you can use `tt` for entering values for specific hours. Say you forgot to update your tracking at 14:00 and now it's 15:02. You do `tt 4 14` [4 because you were feeling pretty energetic and that's probably why you forgot to track your energy in the first place, and 14 because that's the hour that has passed].
+
+**Yay.**
 
 ### doing the maths
 (You don't need to do any maths at all. Script should take care of it.)
@@ -66,10 +72,10 @@ Or maybe you have a better chart-making tool. Do tell me about it.
 ## WHY
 I wanted a way to track my personal energy levels hourly to figure out how it fluctuated throughout the day. I wanted to be able to calculate the hourly average so I could have a simple little chart to look at.
 
-There are several android apps that allow you to track your mood but most of them are made so you can track daily fluctuations, not hourly, so for this particular use they missed the point and didn't do me much good. I did find two equally named _Energy Tracker_ android apps [[this](https://play.google.com/store/apps/details?id=com.energon&hl=en_US&gl=US) and [this](https://play.google.com/store/apps/details?id=com.approvequestions.energytracker)] which do exactly what I want but do not export the data the way I wanted to, and having it restricted to the app wasn't something that suited me.
+There are several android apps that allow you to track your mood but most of them are made so you can track daily fluctuations, not hourly, so for this particular use they missed the point and didn't do me much good. I did find two equally named _Energy Tracker_ android apps [[this](https://play.google.com/store/apps/details?id=com.energon&hl=en_US&gl=US) and [this](https://play.google.com/store/apps/details?id=com.approvequestions.energytracker)] which do exactly what I want but do not export the data the way I wanted to (or at all), and having it restricted to the app wasn't something that suited me.
 
 ## BEWARE
-This is not a proper app. These are not proper scripts. I'm just a nerdy artist, definitely not a programmer. I barely know basic bash. But I'm learning and this was fun to do, I'm happy with the results, stuff work, and thought I'd share.
+This is **not** a proper app. These are **not** proper scripts. I'm just a nerdy artist, definitely not a programmer. I barely know basic bash. But I'm learning and this was fun to do, I'm happy with the results, stuff work, and thought I'd share.
 
 If you use these as an idea for something more solid, do let me know.
 
