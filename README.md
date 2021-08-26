@@ -83,6 +83,9 @@ This is **not** a proper app. These are **not** proper scripts. I'm just a nerdy
 
 If you use these as an idea for something more solid, do let me know.
 
+## THANKS
+[Archie](https://jonathanh.co.uk/) helped me with bash loops and bash maths and patience. Thank you!
+
 ## FEEDBACK
 
 "PERFECTION." - My therapist, 2021.
