@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+file=/home/olivia/droidcloud/energy.csv
+output=/home/olivia/droidcloud/av-energy.csv
+
+# ORIGINAL CODE BY ARCHIE
+#cat $file | sed 's/.*:00,//' | while read line; do
+#    total=0
+#    count=0
+#    while read number; do
+#        total="$(( $total + $number ))"
+#        count="$(( $count + 1 ))"
+#        done <<< $(echo "$line" | tr ',' '\n')
+#    echo "$line    AV: $( echo "scale=3; $total / $count" | bc )"
+#done
+
+# MY ADAPTATION
+cat $file | while read line; do
+    total=0
+    count=0
+    while read number; do
+        total="$(( $total + $number ))"
+        count="$(( $count + 1 ))"
+        done <<< $(echo "$line" | sed 's/.*:00,//' | tr ',' '\n')
+    echo "$( echo $line | awk  -F ',' '{ print $1 }' ),$( echo "scale=3; $total / $count" | bc )"
+done > $output
+
+# ADD PROPER CSV HEADER FOR THE GRAPH THINGIES
+sed -i '1s/^/HORA,ENERGIA\n/' $output
+
+echo "stuff got calculated!"
+echo "making pretty chart..."
+
+# MAKE PRETTY CHART
+graph $output --fontsize 8 -F %H:%M --color orange -o /home/olivia/droidcloud/energy-graph.png

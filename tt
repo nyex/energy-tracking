@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+file=/home/olivia/droidcloud/energy.csv
+
+if [ -z "$2" ];then
+    echo "need arguments!
+usage: tt [energy level 1-5] [2-digit hour]"
+    exit 0
+fi
+
+sed -i "/$2:/s/$/,$1/" $file
+
+echo "⚡$1
+at "$2"h today;
+ok!"

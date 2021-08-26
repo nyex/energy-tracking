@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+file=/home/olivia/droidcloud/energy.csv
+hourpattern=$(date +"%H:")
+
+if [ -z "$1" ];then
+    echo "what?
+usage: te [energy level 1-5]"
+    exit 0
+fi
+
+sed -i "/$hourpattern/s/$/,$1/" $file
+
+echo "⚡$1
+at $(echo $hourpattern | sed 's/://g' )h;
+ok!"
