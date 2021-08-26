@@ -4,8 +4,12 @@
 ## WHAT IS THIS MADNESS
 These are some scripts that will help me keep track of my energy level, hourly, as the day goes. It's supposed to be an interesting tool if you have ADHD or if you're autistic, and have issues dealing with energy fluctuations during the day; or if you're just curious about your **best hour** or something to that effect. Also, it spits out a nice looking chart; because numbers are confusing to look at. And I like charts a lot.
 
-## HOW IT WORKS
+## DEPENDENCIES
+[graph-cli](https://github.com/mcastorina/graph-cli) for the chart generation.
 
+You can install it with pip: `pip install graph-cli`.
+
+## HOW IT WORKS
 ### setting things up
 There are 3 scripts that will do the work; first, though, you need to create a `energy.csv` file like this:
 
