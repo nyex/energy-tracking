@@ -78,6 +78,9 @@ I wanted a way to track my personal energy levels hourly to figure out how it fl
 
 There are several android apps that allow you to track your mood but most of them are made so you can track daily fluctuations, not hourly, so for this particular use they missed the point and didn't do me much good. I did find two equally named _Energy Tracker_ android apps [[this](https://play.google.com/store/apps/details?id=com.energon&hl=en_US&gl=US) and [this](https://play.google.com/store/apps/details?id=com.approvequestions.energytracker)] which do exactly what I want but do not export the data the way I wanted to (or at all), and having it restricted to the app wasn't something that suited me.
 
+## IDEAS
+I suppose I could make `te` and `tt` into just one script. I don't know how yet. I might try and figure it out.
+
 ## BEWARE
 This is **not** a proper app. These are **not** proper scripts. I'm just a nerdy artist, definitely not a programmer. I barely know basic bash. But I'm learning and this was fun to do, I'm happy with the results, stuff work, and thought I'd share.
 
