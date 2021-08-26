@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-file=/home/olivia/droidcloud/energy.csv
-output=/home/olivia/droidcloud/av-energy.csv
+file=$HOME/droidcloud/energy.csv
+output=$HOME/droidcloud/av-energy.csv
+chart=$HOME/droidcloud/energy-graph.png
 
 # ORIGINAL CODE BY ARCHIE
 #cat $file | sed 's/.*:00,//' | while read line; do
@@ -32,4 +33,4 @@ echo "stuff got calculated!"
 echo "making pretty chart..."
 
 # MAKE PRETTY CHART
-graph $output --fontsize 8 -F %H:%M --color orange -o /home/olivia/droidcloud/energy-graph.png
+graph $output --fontsize 8 -F %H:%M --color orange -o $chart

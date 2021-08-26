@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-file=/home/olivia/droidcloud/energy.csv
+file=$HOME/droidcloud/energy.csv
 
 if [ -z "$2" ];then
     echo "need arguments!

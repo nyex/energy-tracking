@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-file=/home/olivia/droidcloud/energy.csv
+file=$HOME/droidcloud/energy.csv
 hourpattern=$(date +"%H:")
 
 if [ -z "$1" ];then
