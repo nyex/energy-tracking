@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
+# version: 0.2
+# aka: first attempt to put it all in one single script
+
 Name=$(basename "$0")
 
-# EDITABLE VARIABLES
+# EDITABLE VARIABLES: FILEPATHS
+
+# file must exist
 file=$HOME/droidcloud/energy.csv
-output=$HOME/droidcloud/av-energy.csv
+
+# folders must exist (files will be created/overwritten by script)
+average=$HOME/droidcloud/av-energy.csv
 chart=$HOME/droidcloud/energy-graph.png
 
 # OTHER VARIABLES
@@ -18,8 +25,8 @@ Options:
      -h      Display this message
      -e      Add tracking for current hour: tracken -e [energy level 1-5]
      -t      Add tracking for any past hour: tracken -t [energy level 1-5] [2-digit hour]
-     -a      Generate hourly average
-     -c      Generate chart with hourly average
+     -a      Generate .csv file with hourly average
+     -c      Generate .png chart with hourly average [needs graph-cli installed]
      -o      Open chart in image viewer [default: feh]
      -f      Open energy.csv file in text editor [default: micro]
 
@@ -27,7 +34,7 @@ EOF
 }
 
 if [ -z "$1" ];then
-    echo "you must tell me what you want to do!"
+    echo "i'm just a script! you must tell me what to do!"
     echo "type -h for usage options"
     exit 0
 fi
@@ -74,16 +81,16 @@ while getopts ":hetacof" opt; do
         			count="$(( $count + 1 ))"
         			done <<< $(echo "$line" | sed 's/.*:00,//' | tr ',' '\n')
     			echo "$( echo $line | awk  -F ',' '{ print $1 }' ),$( echo "scale=3; $total / $count" | bc )"
-			done > $output
+			done > $average
 
 			# ADD PROPER CSV HEADER FOR THE GRAPH THINGIES
-			sed -i '1s/^/HORA,ENERGIA\n/' $output
+			sed -i '1s/^/HORA,ENERGIA\n/' $average
 
 			echo "stuff got calculated!"
             ;;
         c)
 			echo "making pretty chart..."
-            graph $output --fontsize 8 -F %H:%M --color orange -o $chart
+            graph $average --fontsize 8 -F %H:%M --color orange -o $chart
 
             ;;
         o)

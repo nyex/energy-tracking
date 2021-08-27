@@ -1,0 +1,4 @@
+file=$HOME/droidcloud/energy.csv
+average=$HOME/droidcloud/av-energy.csv
+chart=$HOME/droidcloud/energy-graph.png
+viewer=feh

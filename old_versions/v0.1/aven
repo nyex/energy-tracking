@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 file=$HOME/droidcloud/energy.csv
-output=$HOME/droidcloud/av-energy.csv
+average=$HOME/droidcloud/av-energy.csv
 chart=$HOME/droidcloud/energy-graph.png
 
 # ORIGINAL CODE BY ARCHIE
@@ -24,13 +24,13 @@ cat $file | while read line; do
         count="$(( $count + 1 ))"
         done <<< $(echo "$line" | sed 's/.*:00,//' | tr ',' '\n')
     echo "$( echo $line | awk  -F ',' '{ print $1 }' ),$( echo "scale=3; $total / $count" | bc )"
-done > $output
+done > $average
 
 # ADD PROPER CSV HEADER FOR THE GRAPH THINGIES
-sed -i '1s/^/HORA,ENERGIA\n/' $output
+sed -i '1s/^/HORA,ENERGIA\n/' $average
 
 echo "stuff got calculated!"
 echo "making pretty chart..."
 
 # MAKE PRETTY CHART
-graph $output --fontsize 8 -F %H:%M --color orange -o $chart
+graph $average --fontsize 8 -F %H:%M --color orange -o $chart

@@ -1,8 +1,24 @@
-# Tools for tracking personal energy
-### aka: some scripts I managed to put together with the help of friends and the internet
+# Tool for tracking personal energy
+### aka: some scripts I managed to put together into one nice-looking tool with the help of friends and the internet
+
+```
+$ ent
+usage --
+	
+record energy:
+	ent <energy level, 1-5> [optional hour, 7-21]
+draw pretty graph:
+	ent draw
+show pretty graph:
+	ent show
+```
 
 ## WHAT IS THIS MADNESS
-These are some scripts that will help me keep track of my energy level, hourly, as the day goes. It's supposed to be an interesting tool if you have ADHD or if you're autistic, and have issues dealing with energy fluctuations during the day; or if you're just curious about your **best hour** or something to that effect. Also, it spits out a nice looking chart; because numbers are confusing to look at. And I like charts a lot.
+This is a script that will help me keep track of my energy level, hourly, as the day goes. It's supposed to be an interesting tool if you have ADHD or if you're autistic, and have issues dealing with energy fluctuations during the day; or if you're just curious about your **best hour** or something to that effect. 
+
+It records data to .csv files, which is a lovely human-readable format that can also be easily synced across devices and edited with a normal text editor if needed. 
+
+The script also spits out a nice looking chart; because numbers are confusing to look at. And I like charts a lot.
 
 ## DEPENDENCIES
 [graph-cli](https://github.com/mcastorina/graph-cli) for the chart generation.
@@ -11,7 +27,26 @@ You can install it with pip: `pip install graph-cli`.
 
 ## HOW IT WORKS
 ### setting things up
-There are 3 scripts that will do the work; first, though, you need to create a `energy.csv` file like this:
+
+Copy the script `ent` to your $PATH and make it executable.
+
+First time you run the script it will:
+
+- create a default config file in `./config/entrc` if it's not there
+- create a 'blank' default `energy.csv` file in your $HOME if it's not there
+
+The default config file is:
+
+```
+file=$HOME/energy.csv
+average=$HOME/av-energy.csv
+chart=$HOME/energy-graph.png
+viewer=feh
+```
+
+You can create it yourself before running the script and edit the paths and your favorite image viewer accordinly if you want.
+
+The default `energy.csv` file assumes you want to track your energy from 7h to 21h because those are the hours I want to track. It is a simple .csv file that looks like this:
 
 ```
 07:00
@@ -31,63 +66,101 @@ There are 3 scripts that will do the work; first, though, you need to create a `
 21:00
 ```
 
-These are the hours I want to track. I suppose if you wake up at 04:00 or goes to bed at 02:00 it makes sense to adapt it to your needs. I usually wake up at 6 and go to bed at 22, so I start traking at 7 and end at 21. You do you.
+I usually wake up at 6 and go to bed at 22, so I start traking at 7 and end at 21. I suppose if you wake up at 04:00 or goes to bed at 02:00 it makes sense to adapt it to your needs. You do you!
 
-Open the scripts now and edit the filepaths on the first lines of each script. 
+If that's the case, you'll want to create your own `energy.csv` file using your own weird range of hours. You also will need to edit lines 27 (for the usage hint) and 47-48 (for input checking) in the script itself, so things don't explode.
 
-- `energy.csv` is the file you just created;
-- `av-energy.csv` will be created by one of the scripts, so it doesn't need to exist (and it gets overwritten every time); you do need to make sure the folder where you want it to be does exist;
-- `energy-graph.png` will be the generated chart image (it also gets overwritten every time).
+And yes, they must be in 24h format.
 
 ### doing the tracking
 Now let's add some numbers!
 
-I use a scale from 1 to 5: 1 is near-zero energy; 2 is low; 3 is ok; 4 is good energy; 5 is **awesome**. You can use your own scale, as long as it's made of integers. I think.
+The script wants you to use a scale from 1 to 5 to measure your energy level: 1 is near-zero energy; 2 is low; 3 is ok; 4 is good energy; 5 is **awesome**. 
 
-The script `te` is the main one. You just run it with the corresponding number for your current energy level as the argument. So you're having a great day: you do `te 5`. 
+If you want a different scale you should edit lines 21 (usage hint) and 111 in the script. At your own risk.
 
-Done. 
+Now you just run the script with your current energy level as the argument. So you're having a great super energetic hour:
 
-It will add a `5` to the line that corresponds to the current hour. The idea is to enter one number per hour. It doesn't matter if you do it at 15:00 or 15:06 or 15:59; it'll add the number to the "15:00" row.
+```
+$ ent 5
+```
+
+DONE.
+
+It will add a `5` to the row in `energy.csv` file that corresponds to the current hour. The idea here is to enter one number per hour. It doesn't matter if you do it at 15:00 or 15:06 or 15:59; it'll add the number to the "15:00" row.
 
 You're supposed to do that every hour. **Set an alarm or something.**
 
 But what if you miss an hour? Oh no!
 
-You could of course just open energy.csv on your favorite editor and add the proper number. But that's probably a lot of work and you wouldn't be using a script if you didn't mind opening a file and editing. 
+You could of course just open `energy.csv` on your favorite editor and add the proper number to the right row. But that's probably a lot of work and you wouldn't be using a script if you didn't mind opening a file and editing. 
 
-So you can use `tt` for entering values for specific hours. Say you forgot to update your tracking at 14:00 and now it's 15:02. You do `tt 4 14` [4 because you were feeling pretty energetic and that's probably why you forgot to track your energy in the first place, and 14 because that's the hour that has passed].
+The script also lets you track energy for specific hours. Say you forgot to update your tracking at 14:00 and now it's 15:02. Instead of entering just the energy level, you add the hour you want to track as an extra argument, like this:
+
+```
+$ ent 4 14
+```
+
+4 because you were feeling quite energetic and that's probably why you forgot to track your energy in the first place, and 14 because that's the hour that has passed.
+
+The script is also super smart and will understand if you type `09` or just `9` for the hour. It only understand 24h format though. Don't push it.
 
 **Yay.**
 
-### doing the maths
-(You don't need to do any maths at all. Script should take care of it.)
+### doing the math
+(You don't need to do any math at all. Script should take care of it.)
 
-The third script is the fancy one that will spit the hourly average on another .csv file. This new file will be called `av-energy.csv` and will have `HORA,ENERGIA` as header. That's Portuguese for `HOUR,ENERGY`. You can change that to your own language, I suppose.
+```
+$ ent draw
+```
 
-[graph-cli](https://github.com/mcastorina/graph-cli) is used for the generation of a chart in .png format. If you don't need/want the chart you can just comment out the last line of the `aven` script. You can also fiddle with options there to change color, font size and whatnot. I happen to like orange.
+This will spit the hourly average on a two-column .csv file. This new file will be called `av-energy.csv` (or whatever you named it in the config file) and will have `HOUR,ENERGY` as header.
+
+[graph-cli](https://github.com/mcastorina/graph-cli) is used for the generation of a chart in .png format. You can also fiddle with options in line 92 of the script to change color, font size and whatnot (check the tool repo for more info). I happen to like orange.
+
+To open the chart in an image viewer ('feh' by default):
+
+```
+$ ent show
+```
 
 My own chart looks like this:
 
 ![](examples/energy-graph.png)
 
-Or maybe you have a better chart-making tool. Do tell me about it.
+### and so on and so on
+The more days you keep at the tracking, the more you'll be able to see how your "average" energy level fluctuation look like. 
+
+The script doesn't care about what day is today or if you have more tracking for afternoon hours and just a couple days of morning hours tracked (because it'll just calculate the average energy level for each hour), but the more entries you have, the more an "average" calculation makes sense.
 
 ## WHY
 I wanted a way to track my personal energy levels hourly to figure out how it fluctuated throughout the day. I wanted to be able to calculate the hourly average so I could have a simple little chart to look at.
 
-There are several android apps that allow you to track your mood but most of them are made so you can track daily fluctuations, not hourly, so for this particular use they missed the point and didn't do me much good. I did find two equally named _Energy Tracker_ android apps [[this](https://play.google.com/store/apps/details?id=com.energon&hl=en_US&gl=US) and [this](https://play.google.com/store/apps/details?id=com.approvequestions.energytracker)] which do exactly what I want but do not export the data the way I wanted to (or at all), and having it restricted to the app wasn't something that suited me.
+There are apps that allow you to track your mood but most of them are made so you can track daily fluctuations, not hourly, so for this particular use they missed the point and didn't do me much good. 
+
+I did find two equally named _Energy Tracker_ android apps [[this](https://play.google.com/store/apps/details?id=com.energon&hl=en_US&gl=US) and [this](https://play.google.com/store/apps/details?id=com.approvequestions.energytracker)] which do exactly what I want but do not export the data the way I wanted to (or at all), and having it restricted to the app wasn't something that suited me.
 
 ## IDEAS
-I suppose I could make `te` and `tt` into just one script. I don't know how yet. I might try and figure it out.
+I set a keyboard shortcut that runs:
+
+```
+#!/usr/bin/env bash
+
+var=$(zenity --entry --text="⚡energy tracking")
+ent $var
+```
+
+You need `zenity` installed for it to work. This will pop up a dialog box and you can enter the energy level for the current hour or energy level + hour you want to track and hit 'OK'.
 
 ## BEWARE
-This is **not** a proper app. These are **not** proper scripts. I'm just a nerdy artist, definitely not a programmer. I barely know basic bash. But I'm learning and this was fun to do, I'm happy with the results, stuff work, and thought I'd share.
-
-If you use these as an idea for something more solid, do let me know.
+I'm just a nerdy artist, definitely not a programmer. I barely know basic bash. But I'm learning and this was fun to do, I had some awesome friends help me make it even more awesome, I'm happy with the results, stuff work, and thought I'd share.
 
 ## THANKS
 [Archie](https://jonathanh.co.uk/) helped me with bash loops and bash maths and patience. Thank you!
+
+Anjune (gemini://anjune.lol) did magic and turned the original 3 messy scripts into a proper script.
+
+[Drew (uoou)](https://friendo.monster/) and [Hex](https://hexdsl.co.uk/) gave me the `zenity` idea for a pop-up dialog and helped me figure out how it worked. I also steal bits of their scripts quite often.
 
 ## FEEDBACK
 
