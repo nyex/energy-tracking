@@ -35,7 +35,7 @@ First time you run the script it will:
 - create a default config file in `./config/entrc` if it's not there
 - create a 'blank' default `energy.csv` file in your $HOME if it's not there
 
-The default config file is:
+The default config file looks like this:
 
 ```
 file=$HOME/energy.csv
@@ -46,7 +46,7 @@ viewer=feh
 
 You can create it yourself before running the script and edit the paths and your favorite image viewer accordinly if you want.
 
-The default `energy.csv` file assumes you want to track your energy from 7h to 21h because those are the hours I want to track. It is a simple .csv file that looks like this:
+The default `energy.csv` file assumes you want to track your energy from 7h to 21h because those are the hours _I want to track myself_. It is a simple .csv file that starts with just one column and looks like this:
 
 ```
 07:00
@@ -66,7 +66,7 @@ The default `energy.csv` file assumes you want to track your energy from 7h to 2
 21:00
 ```
 
-I usually wake up at 6 and go to bed at 22, so I start traking at 7 and end at 21. I suppose if you wake up at 04:00 or goes to bed at 02:00 it makes sense to adapt it to your needs. You do you!
+I usually wake up at 6 and go to bed at 22, so I start traking at 7 and end at 21. I suppose if you wake up at 04:00 or go to bed at 02:00 it makes sense to adapt it to your needs. You do you.
 
 If that's the case, you'll want to create your own `energy.csv` file using your own weird range of hours. You also will need to edit lines 27 (for the usage hint) and 47-48 (for input checking) in the script itself, so things don't explode.
 
@@ -79,7 +79,7 @@ The script wants you to use a scale from 1 to 5 to measure your energy level: 1 
 
 If you want a different scale you should edit lines 21 (usage hint) and 111 in the script. At your own risk.
 
-Now you just run the script with your current energy level as the argument. So you're having a great super energetic hour:
+Run the script with your current energy level as the argument. So you're having a great super energetic hour:
 
 ```
 $ ent 5
@@ -87,7 +87,7 @@ $ ent 5
 
 DONE.
 
-It will add a `5` to the row in `energy.csv` file that corresponds to the current hour. The idea here is to enter one number per hour. It doesn't matter if you do it at 15:00 or 15:06 or 15:59; it'll add the number to the "15:00" row.
+This will add a `5` to the row in `energy.csv` file that corresponds to the current hour. The idea here is to enter one number per hour. It doesn't matter if you do it at 15:00 or 15:06 or 15:59; it'll add the number to the "15:00" row.
 
 You're supposed to do that every hour. **Set an alarm or something.**
 
@@ -105,8 +105,6 @@ $ ent 4 14
 
 The script is also super smart and will understand if you type `09` or just `9` for the hour. It only understand 24h format though. Don't push it.
 
-**Yay.**
-
 ### doing the math
 (You don't need to do any math at all. Script should take care of it.)
 
@@ -114,7 +112,7 @@ The script is also super smart and will understand if you type `09` or just `9` 
 $ ent draw
 ```
 
-This will spit the hourly average on a two-column .csv file. This new file will be called `av-energy.csv` (or whatever you named it in the config file) and will have `HOUR,ENERGY` as header.
+This will spit the hourly average to a two-column .csv file (the file will get overwritten every time you run this). This file will be called `av-energy.csv` (or whatever you named it in the config file) and will have `HOUR,ENERGY` as header.
 
 [graph-cli](https://github.com/mcastorina/graph-cli) is used for the generation of a chart in .png format. You can also fiddle with options in line 92 of the script to change color, font size and whatnot (check the tool repo for more info). I happen to like orange.
 
@@ -129,9 +127,9 @@ My own chart looks like this:
 ![](examples/energy-graph.png)
 
 ### and so on and so on
-The more days you keep at the tracking, the more you'll be able to see how your "average" energy level fluctuation look like. 
+The more days you keep at the tracking, the more you'll be able to see how your _average_ energy level fluctuation looks like. 
 
-The script doesn't care about what day is today or if you have more tracking for afternoon hours and just a couple days of morning hours tracked (because it'll just calculate the average energy level for each hour), but the more entries you have, the more an "average" calculation makes sense.
+The script doesn't care about what day is today or if you have more tracking for afternoon hours and just a couple days of morning hours tracked (because it'll just calculate the average energy level for each hour), but the more entries you have, the more an _average_ calculation makes sense.
 
 ## WHY
 I wanted a way to track my personal energy levels hourly to figure out how it fluctuated throughout the day. I wanted to be able to calculate the hourly average so I could have a simple little chart to look at.

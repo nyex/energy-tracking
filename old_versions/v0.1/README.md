@@ -71,7 +71,7 @@ The third script is the fancy one that will spit the hourly average on another .
 
 My own chart looks like this:
 
-![](examples/energy-graph.png)
+![](/examples/energy-graph.png)
 
 Or maybe you have a better chart-making tool. Do tell me about it.
 
