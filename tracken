@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+Name=$(basename "$0")
+
+# EDITABLE VARIABLES
+file=$HOME/droidcloud/energy.csv
+output=$HOME/droidcloud/av-energy.csv
+chart=$HOME/droidcloud/energy-graph.png
+
+# OTHER VARIABLES
+hourpattern=$(date +"%H:")
+
+_usage() {
+    cat <<- EOF
+Usage:   $Name [option] [arguments]
+
+Options:
+     -h      Display this message
+     -e      Add tracking for current hour: tracken -e [energy level 1-5]
+     -t      Add tracking for any past hour: tracken -t [energy level 1-5] [2-digit hour]
+     -a      Generate hourly average
+     -c      Generate chart with hourly average
+     -o      Open chart in image viewer [default: feh]
+     -f      Open energy.csv file in text editor [default: micro]
+
+EOF
+}
+
+if [ -z "$1" ];then
+    echo "you must tell me what you want to do!"
+    echo "type -h for usage options"
+    exit 0
+fi
+
+#  Handle command line arguments
+while getopts ":hetacof" opt; do
+    case $opt in
+        h)
+            _usage
+            exit 0
+            ;;
+        e)
+			if [ -z "$2" ];then
+    			echo "need argument!"
+				echo "usage: tracken -e [energy level 1-5]"
+    		exit 0
+			fi
+        
+            sed -i "/$hourpattern/s/$/,$2/" $file
+
+			echo ⚡$2
+			echo at $(echo $hourpattern | sed 's/://g' )h;
+			echo nice!
+            ;;
+        t)
+        	if [ -z "$3" ];then
+    			echo "need arguments!"
+				echo "usage: tracken -t [energy level 1-5] [2-digit hour]"
+    		exit 0
+			fi
+
+            sed -i "/$3/s/$/,$2/" $file
+
+			echo ⚡$2
+			echo at "$3"h today;
+			echo ok!
+            ;;
+        a)
+            cat $file | while read line; do
+    			total=0
+    			count=0
+    			while read number; do
+        			total="$(( $total + $number ))"
+        			count="$(( $count + 1 ))"
+        			done <<< $(echo "$line" | sed 's/.*:00,//' | tr ',' '\n')
+    			echo "$( echo $line | awk  -F ',' '{ print $1 }' ),$( echo "scale=3; $total / $count" | bc )"
+			done > $output
+
+			# ADD PROPER CSV HEADER FOR THE GRAPH THINGIES
+			sed -i '1s/^/HORA,ENERGIA\n/' $output
+
+			echo "stuff got calculated!"
+            ;;
+        c)
+			echo "making pretty chart..."
+            graph $output --fontsize 8 -F %H:%M --color orange -o $chart
+
+            ;;
+        o)
+            feh $chart
+
+            ;;
+
+        f)
+            micro $file
+
+            ;;
+
+        *)
+            echo -e "Option does not exist: -$OPTARG"
+            _usage
+            exit 1
+    esac
+done
+shift $((OPTIND - 1))
+
+
+exit 0
+
