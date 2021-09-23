@@ -13,6 +13,7 @@
 - send error messages to STDERR as is right and proper
 - replaced all if/thens on a whim
 
+## USAGE
 ```
 $ ent
 usage --
