@@ -1,4 +1,6 @@
-file=$HOME/droidcloud/energy.csv
-average=$HOME/droidcloud/av-energy.csv
-chart=$HOME/droidcloud/energy-graph.png
+file=$HOME/energy.csv
+average=$HOME/av-energy.csv
+chart=$HOME/energy-graph.png
+firsthour=7
+lasthour=21
 viewer=feh

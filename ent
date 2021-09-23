@@ -1,67 +1,86 @@
 #!/usr/bin/env bash
 
-# version: 0.3
-# aka: pretty much a proper script
+# version: 0.4.1
+# aka: pretty much a proper script with added fanciness
 
 CONFFILE=${XDG_CONFIG_HOME:-$HOME/.config}/entrc
 
-if [ ! -f $CONFFILE ] ; then
+[ -f $CONFFILE ] || {
 	echo "creating default configuration in '$CONFFILE'..."
-	echo -e 'file=$HOME/energy.csv\naverage=$HOME/av-energy.csv\nchart=$HOME/energy-graph.png\nviewer=feh' > $CONFFILE
-fi
+	echo -e 'file=$HOME/energy.csv\naverage=$HOME/av-energy.csv\nchart=$HOME/energy-graph.png\nfirsthour=7\nlasthour=21\nviewer=feh' > $CONFFILE
+}
 
 . $CONFFILE
 
-if [ ! -f $file ] ; then
+intrex="^[0-9]+$"
+
+[[ $firsthour =~ $intrex && $lasthour =~ $intrex ]] || { 
+	echo -e "error in config file ($CONFFILE):\nfirsthour ($firsthour) and lasthour ($lasthour) must be non-negative whole numbers" >&2
+	exit 1
+}
+
+(( firsthour < 0 || lasthour > 23 )) && { 
+	echo -e "error in config file ($CONFFILE):\nfirsthour ($firsthour) and lasthour ($lasthour) must lie between 0 and 23" >&2
+	exit 1
+}
+
+(( firsthour > lasthour )) && { 
+	echo -e "error in config file ($CONFFILE):\nfirsthour ($firsthour) must not be greater than lasthour ($lasthour)" >&2
+	exit 1 
+}
+
+[ -f $file ] || {
 	echo "creating empty hourly energy file in '$file'..."
-	echo -e "07:00\n08:00\n09:00\n10:00\n11:00\n12:00\n13:00\n14:00\n15:00\n16:00\n17:00\n18:00\n19:00\n20:00\n21:00" > $file
-fi
+	for i in $(seq $firsthour $lasthour); do 
+		echo "$(printf %02d $i):00" >> $file
+	done
+}
 
-#####
-
-function usage 
-{
+function usage {
 	echo "usage -- 
 	
 record energy: 
-	$(basename $0) <energy level, 1-5> [optional hour, 7-21]
+	$(basename $0) <energy level, 1-5> [optional hour, $firsthour-$lasthour]
 draw pretty graph: 
 	$(basename $0) draw
 show pretty graph: 
 	$(basename $0) show"
 }
 
-#####
-
-function track 
-{
+function track {
 	energy=$1
 
-	if [ -z "$2" ] ; then
-		hour=$(date +"%H")	
-	else
-		# for the range check, remove all leading zeroes so bash
-		# won't interpret numbers like 020 as octal:
-		hour=${2#"${2%%[!0]*}"}
-		
-		if (( $hour < 7 )) || (( $hour > 21 )) ; then
-			echo "hour must be between 7 and 21!"
-			exit 1
-		fi
-		
-		# add, or re-add, a leading zero to single-digit hour:
-		hour=$(printf %02d $hour)
-	fi
+	# if we've not been given an hour, use the current time
+	[ -z "$2" ] && hour=$(date +"%H") || hour=$2
+
+	# compare hour to our regex to check if it's even a number
+	[[ $hour =~ $intrex ]] || { 
+		echo "error: hour ($hour) must be a non-negative whole number!" >&2
+		exit 1
+	}
 	
+	# remove leading zeroes so bash won't interpret numbers like 020 as octal 
+	# during the range check
+	(( hour != 0 )) && hour=${hour#"${2%%[!0]*}"}
+
+	(( hour < firsthour || hour > lasthour )) && { 
+		echo "error: hour ($hour) must lie between $firsthour and $lasthour!" >&2
+		exit 1 
+	}
+		
+	# add, or re-add, a leading zero to single-digit hour (to conform to
+	# the csv file's format)
+	hour=$(printf %02d $hour) 
+
+	# everything above this comment can probably be replaced with a one-liner by someone smarter
+
 	sed -i "/$hour:/s/$/,$energy/" $file && echo "added energy level ⚡$energy for ${hour}h!"
 }
 
-#####
-
-function draw # this is the unmodified aven script
-{ 
-	# ORIGINAL CODE BY ARCHIE FOR REFERENCE
-	# cat $file | sed 's/.*:00,//' | while read line; do
+# this is the unmodified aven script
+function draw { 
+	# ORIGINAL CODE BY ARCHIE
+	#cat $file | sed 's/.*:00,//' | while read line; do
 	#    total=0
 	#    count=0
 	#    while read number; do
@@ -69,7 +88,7 @@ function draw # this is the unmodified aven script
 	#        count="$(( $count + 1 ))"
 	#        done <<< $(echo "$line" | tr ',' '\n')
 	#    echo "$line    AV: $( echo "scale=3; $total / $count" | bc )"
-	# done
+	#done
 
 	# MY ADAPTATION
 	cat $file | while read line; do
@@ -86,18 +105,16 @@ function draw # this is the unmodified aven script
 	sed -i '1s/^/HOUR,ENERGY\n/' $average
 
 	echo "stuff got calculated!"
+	echo "making pretty chart..."
 
 	# MAKE PRETTY CHART
-	echo "making pretty chart..."
-	graph $average --fontsize 8 -F %H:%M --color orange -o $chart
-	
+	graph $average --fontsize 8 -F %H:%M --fill --yrange 1:5 --color orange -o $chart
 }
 
 function show
 { 
 	$viewer $chart
 }
-#####
 
 case $1 in
 	draw ) 

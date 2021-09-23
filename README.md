@@ -1,6 +1,18 @@
 # Tool for tracking personal energy
 ### aka: some scripts I managed to put together into one nice-looking tool with the help of friends and the internet
 
+## changelog 
+12 Sep 2021 (by Anjune):
+- very minor streamlining of some tests
+
+11 Sep 2021 (by Anjune):
+- enabled user configuration of start and end hour
+- fixed single-digit 0 having its 'leading' zero removed
+- validity checks for hour, whether provided by current time or user
+- validity checks for firsthour and lasthour in config file
+- send error messages to STDERR as is right and proper
+- replaced all if/thens on a whim
+
 ```
 $ ent
 usage --
@@ -41,12 +53,16 @@ The default config file looks like this:
 file=$HOME/energy.csv
 average=$HOME/av-energy.csv
 chart=$HOME/energy-graph.png
+firsthour=7
+lasthour=21
 viewer=feh
 ```
 
 You can create it yourself before running the script and edit the paths and your favorite image viewer accordinly if you want.
 
-The default `energy.csv` file assumes you want to track your energy from 7h to 21h because those are the hours _I want to track myself_. It is a simple .csv file that starts with just one column and looks like this:
+The default `energy.csv` file assumes you want to track your energy from 7h to 21h because those are the hours _I want to track myself_. Change `firsthour` and `lasthour` before running the script if you want to track different hours and the script will generate `energy.csv` according to your needs. And yes, hours must be in 24h format.
+
+`energy.csv` is a simple .csv file that starts with just one column and looks like this:
 
 ```
 07:00
@@ -65,12 +81,6 @@ The default `energy.csv` file assumes you want to track your energy from 7h to 2
 20:00
 21:00
 ```
-
-I usually wake up at 6 and go to bed at 22, so I start traking at 7 and end at 21. I suppose if you wake up at 04:00 or go to bed at 02:00 it makes sense to adapt it to your needs. You do you.
-
-If that's the case, you'll want to create your own `energy.csv` file using your own weird range of hours. You also will need to edit lines 27 (for the usage hint) and 47-48 (for input checking) in the script itself, so things don't explode.
-
-And yes, they must be in 24h format.
 
 ### doing the tracking
 Now let's add some numbers!
@@ -122,7 +132,7 @@ To open the chart in an image viewer ('feh' by default):
 $ ent show
 ```
 
-My own chart looks like this:
+My own chart looked like this at one point:
 
 ![](examples/energy-graph.png)
 
@@ -154,9 +164,9 @@ You need `zenity` installed for it to work. This will pop up a dialog box and yo
 I'm just a nerdy artist, definitely not a programmer. I barely know basic bash. But I'm learning and this was fun to do, I had some awesome friends help me make it even more awesome, I'm happy with the results, stuff work, and thought I'd share.
 
 ## THANKS
-[Archie](https://jonathanh.co.uk/) helped me with bash loops and bash maths and patience. Thank you!
+Top contributor Anjune (gemini://anjune.lol) did magic and turned the original 3 messy scripts into a proper script. Also error catching.
 
-Anjune (gemini://anjune.lol) did magic and turned the original 3 messy scripts into a proper script.
+[Archie](https://jonathanh.co.uk/) helped me with bash loops and bash maths and patience. Thank you!
 
 [Drew (uoou)](https://friendo.monster/) and [Hex](https://hexdsl.co.uk/) gave me the `zenity` idea for a pop-up dialog and helped me figure out how it worked. I also steal bits of their scripts quite often.
 

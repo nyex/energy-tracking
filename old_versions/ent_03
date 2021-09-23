@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+
+# version: 0.4.1
+# aka: pretty much a proper script with added fanciness
+
+CONFFILE=${XDG_CONFIG_HOME:-$HOME/.config}/entrc
+
+if [ ! -f $CONFFILE ] ; then
+	echo "creating default configuration in '$CONFFILE'..."
+	echo -e 'file=$HOME/energy.csv\naverage=$HOME/av-energy.csv\nchart=$HOME/energy-graph.png\nviewer=feh' > $CONFFILE
+fi
+
+. $CONFFILE
+
+if [ ! -f $file ] ; then
+	echo "creating empty hourly energy file in '$file'..."
+	echo -e "07:00\n08:00\n09:00\n10:00\n11:00\n12:00\n13:00\n14:00\n15:00\n16:00\n17:00\n18:00\n19:00\n20:00\n21:00" > $file
+fi
+
+#####
+
+function usage 
+{
+	echo "usage -- 
+	
+record energy: 
+	$(basename $0) <energy level, 1-5> [optional hour, 7-21]
+draw pretty graph: 
+	$(basename $0) draw
+show pretty graph: 
+	$(basename $0) show"
+}
+
+#####
+
+function track 
+{
+	energy=$1
+
+	if [ -z "$2" ] ; then
+		hour=$(date +"%H")	
+	else
+		# for the range check, remove all leading zeroes so bash
+		# won't interpret numbers like 020 as octal:
+		hour=${2#"${2%%[!0]*}"}
+		
+		if (( $hour < 7 )) || (( $hour > 21 )) ; then
+			echo "hour must be between 7 and 21!"
+			exit 1
+		fi
+		
+		# add, or re-add, a leading zero to single-digit hour:
+		hour=$(printf %02d $hour)
+	fi
+	
+	sed -i "/$hour:/s/$/,$energy/" $file && echo "added energy level ⚡$energy for ${hour}h!"
+}
+
+#####
+
+function draw # this is the unmodified aven script
+{ 
+	# ORIGINAL CODE BY ARCHIE FOR REFERENCE
+	# cat $file | sed 's/.*:00,//' | while read line; do
+	#    total=0
+	#    count=0
+	#    while read number; do
+	#        total="$(( $total + $number ))"
+	#        count="$(( $count + 1 ))"
+	#        done <<< $(echo "$line" | tr ',' '\n')
+	#    echo "$line    AV: $( echo "scale=3; $total / $count" | bc )"
+	# done
+
+	# MY ADAPTATION
+	cat $file | while read line; do
+		total=0
+		count=0
+		while read number; do
+			total="$(( $total + $number ))"
+			count="$(( $count + 1 ))"
+			done <<< $(echo "$line" | sed 's/.*:00,//' | tr ',' '\n')
+		echo "$( echo $line | awk  -F ',' '{ print $1 }' ),$( echo "scale=3; $total / $count" | bc )"
+	done > $average
+
+	# ADD PROPER CSV HEADER FOR THE GRAPH THINGIES
+	sed -i '1s/^/HOUR,ENERGY\n/' $average
+
+	echo "stuff got calculated!"
+
+	# MAKE PRETTY CHART
+	echo "making pretty chart..."
+	graph $average --fontsize 8 -F %H:%M --fill --yrange 1:5 --color orange -o $chart
+	
+}
+
+function show
+{ 
+	$viewer $chart
+}
+#####
+
+case $1 in
+	draw ) 
+		draw
+		exit
+		;;
+	show ) 
+		show
+		exit
+		;;
+	[12345] )
+		track $1 $2
+		exit
+		;;
+	# add additional commands/options here
+	* ) 	
+		usage
+		exit
+		;;
+esac
