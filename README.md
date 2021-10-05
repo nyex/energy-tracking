@@ -1,6 +1,9 @@
 # Tool for tracking personal energy
 ### aka: some scripts I managed to put together into one nice-looking tool with the help of friends and the internet
 
+main repo: [codeberg.org/olivia/energy-trackin](https://codeberg.org/olivia/energy-tracking) 
+mirror repo: [github.com/nyex/energy-tracking](https://github.com/nyex/energy-tracking)
+
 ## changelog 
 12 Sep 2021 (by Anjune):
 - very minor streamlining of some tests
